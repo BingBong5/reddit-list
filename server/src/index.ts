@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 app.get("/api/dummy", dummy);  // TODO: REMOVE
 app.post("/api/getSubredditInfos", getSubredditInfos);
 app.listen(port, () => console.log(`Server listening on ${port}`));
+//
 
 /**
  * store ITEMS on back end
