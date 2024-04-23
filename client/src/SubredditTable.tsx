@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { SubredditInfo } from "./data/subredditInfo";
 
+const DEBUG: boolean = true;
+
 type SubredditTableProps = {
   items: SubredditInfo[],
   page: bigint,
@@ -17,12 +19,12 @@ export class SubredditTable extends Component<SubredditTableProps, {}> {
   }
 
   makeSubredditTable = (props: { subreddits: SubredditInfo[] }): JSX.Element => {
+    if(DEBUG) console.log(`SubredditTable.makeSubredditTable: itemsPerPage: ${this.props.itemsPerPage} items: ${this.props.items}`);
     const rows: JSX.Element[] = [];
     let alternate: boolean = false;
     let rank: bigint = this.props.page == 0n ? 1n : (this.props.itemsPerPage * this.props.page) + 1n;
 
-    // Inv: {}
-    for (let i: bigint = 0n; i < this.props.itemsPerPage; i++) {
+    for (let i: bigint = 0n; i < this.props.items.length; i++) {
       rows.push(
         this.makeSubredditRow({ subreddit: props.subreddits[Number(i)], alternate: alternate, rank: rank + i })
       );

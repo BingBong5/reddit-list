@@ -1,0 +1,10 @@
+brainstorm:
+SCRIPT:
+make sure it working. make it get daily, weekly and monthly data;
+make sure new subreddit finding script works
+
+
+site - front end, server
+make server connect to mongoDB
+make front end work + look good.
+upload front end, server to AWS or something... 

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ITEMS, SubredditInfo } from "./data/subredditInfo";
+// import { isRecord } from "./record";
 
 
 // Require type checking of request body.
@@ -15,12 +16,13 @@ const items: SubredditInfo[] = ITEMS;
  * @param res the response
  */
 export const getSubredditInfos = (req: SafeRequest, res: SafeResponse): void => {
+
   const itemsPerPage = req.body.itemsPerPage;
   const pageNumber = req.body.pageNumber;
 
   // check that itemsPerPage is valid and part of the request
-  if (typeof itemsPerPage != "number") {
-    res.status(400).send("missing or invalid 'itemsPerPage' parameter");
+  if (typeof itemsPerPage !== "number") {
+    res.status(400).send(`missing or invalid 'itemsPerPage' parameter: ${itemsPerPage}`);
     return;
   } else if (isNaN(itemsPerPage) || itemsPerPage < 0) {
     res.status(400).send(`itemsPerPage is not a positive integer: ${itemsPerPage}`);
@@ -28,7 +30,7 @@ export const getSubredditInfos = (req: SafeRequest, res: SafeResponse): void => 
   }
 
   // check that pageNumber is valid and part of the request
-  if (typeof pageNumber != "number") {
+  if (typeof pageNumber !== "number") {
     res.status(400).send("missing or invalid 'pageNumber' parameter");
     return;
   } else if (isNaN(pageNumber) || pageNumber < 0) {
@@ -47,29 +49,12 @@ export const getSubredditInfos = (req: SafeRequest, res: SafeResponse): void => 
   const returnItems: SubredditInfo[] = [];
   const endIndex = Math.min(startingIndex + itemsPerPage, items.length);
 
-  for (let i: number = 0; i < endIndex; i++) {
+  for (let i: number = startingIndex; i < endIndex; i++) {
     returnItems.push(items[i]);
   }
 
   res.send({ items: returnItems });
 }
-
-
-
-/**
- * Dummy route that just returns a hello message to the client.
- * @param req The request object
- * @param res The response object
- */
-export const dummy = (req: SafeRequest, res: SafeResponse): void => {
-  const name = first(req.query.name);
-  if (name === undefined) {
-    res.status(400).send('missing or invalid "name" parameter');
-    return;
-  }
-
-  res.send({ msg: `Hi, ${name}!` });
-};
 
 
 // Helper to return the (first) value of the parameter if any was given.

@@ -11,15 +11,11 @@ export const isRecord = (val: unknown): val is Record<string, unknown> => {
 
 
 export const  parseSubredditInfo = (val  : unknown): SubredditInfo[] | undefined => {
-  if(!isRecord(val)){
-    return undefined;
-  }else if (!Array.isArray(val.items)) {
-    console.log(`parseSubredditInfo: !Array.isArray${val}`);
+  if (!Array.isArray(val)) {
     return undefined;
   } else {
-    const items = val.items
     const flashcards: SubredditInfo[] = [];
-    for (const item of items) {
+    for (const item of val) {
       if (typeof item.name !== 'string' || typeof item.subscribers !== 'number' || typeof item.over18 !== 'boolean') {
         return undefined;
       } else {

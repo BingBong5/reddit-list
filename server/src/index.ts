@@ -1,5 +1,5 @@
 import express, { Express } from "express";
-import { dummy, getSubredditInfos } from './routes';
+import {getSubredditInfos } from './routes';
 import bodyParser from 'body-parser';
 
 
@@ -7,7 +7,6 @@ import bodyParser from 'body-parser';
 const port: number = 8088;
 const app: Express = express();
 app.use(bodyParser.json());
-app.get("/api/dummy", dummy);  // TODO: REMOVE
 app.post("/api/getSubredditInfos", getSubredditInfos);
 app.listen(port, () => console.log(`Server listening on ${port}`));
 //

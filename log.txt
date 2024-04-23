@@ -1,0 +1,4 @@
+4/21
+made general front end work, 
+started working on server so I can fetch data from server
+setup (???) github ish...

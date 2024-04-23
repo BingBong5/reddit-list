@@ -18,21 +18,24 @@ export class App extends Component<{}, PageState> {
   constructor(props: {}) {
     super(props);
 
-    this.state = {page: 0n, itemsPerPage : 25n};
+    this.state = {
+      page: 0n,
+      itemsPerPage : 25n
+    };
   }
   
   render = (): JSX.Element => {
     return (
     <div className="pageContainer">
-      <PageHeader doItemsPerPageClick={this.doItemsPerPageClick}/>
-      <SubredditList page={this.state.page} itemsPerPage={this.state.itemsPerPage} /> 
+      <PageHeader doItemsPerPageClick={(itemsPerPage) => this.doItemsPerPageClick(itemsPerPage)}/>
+      <SubredditList pageNumber={this.state.page} itemsPerPage={this.state.itemsPerPage} /> 
     </div>)
     ;
   };
 
   doItemsPerPageClick = (itemsPerPage: bigint): void => {
-    if(DEBUG) console.log(`App.doItemsPerPageClick ${this.state.itemsPerPage}`);
-    this.setState({itemsPerPage: itemsPerPage});
+    if(DEBUG) console.log(`App.doItemsPerPageClick ${itemsPerPage}`);
+    this.setState({itemsPerPage});
   }
 }
 
