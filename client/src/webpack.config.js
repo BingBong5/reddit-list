@@ -7,7 +7,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const info = {
-  TITLE: 'Flashcards'
+  TITLE: 'Subreddit Lists'
 }
 
 const config = {

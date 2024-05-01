@@ -19,6 +19,7 @@ export const getSubredditInfos = (req: SafeRequest, res: SafeResponse): void => 
 
   const itemsPerPage = req.body.itemsPerPage;
   const pageNumber = req.body.pageNumber;
+  const firstItemNumber = req.body.firstItemNumber;
 
   // check that itemsPerPage is valid and part of the request
   if (typeof itemsPerPage !== "number") {
@@ -38,22 +39,21 @@ export const getSubredditInfos = (req: SafeRequest, res: SafeResponse): void => 
     return;
   }
 
-  const startingIndex: number = pageNumber * itemsPerPage;
-
-  // check that pageNumber and itemsPerPage is a valid index
-  if (startingIndex >= items.length) {
-    res.status(400).send(`passed starting index is invalid: ${pageNumber * itemsPerPage}`);
+  if(typeof firstItemNumber !== 'number'){
+    res.status(400).send("missing or invalid 'firstItemNumber' parameter");
+    return;
+  } else if (isNaN(firstItemNumber) || firstItemNumber < 0) {
+    res.status(400).send(`firstItemNumber is not a positive integer: ${firstItemNumber}`);
     return;
   }
 
   const returnItems: SubredditInfo[] = [];
-  const endIndex = Math.min(startingIndex + itemsPerPage, items.length);
 
-  for (let i: number = startingIndex; i < endIndex; i++) {
+  for (let i: number = firstItemNumber; i < firstItemNumber + itemsPerPage; i++) {
     returnItems.push(items[i]);
   }
 
-  res.send({ items: returnItems });
+  res.send({ items: returnItems, pageNumber: pageNumber, itemsPerPage: itemsPerPage, firstItemNumber: firstItemNumber });
 }
 
 

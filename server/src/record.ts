@@ -10,6 +10,7 @@ export const isRecord = (val: unknown): val is Record<string, unknown> => {
 };
 
 
+
 export const  parseSubredditInfo = (val  : unknown): SubredditInfo[] | undefined => {
   if (!Array.isArray(val)) {
     return undefined;

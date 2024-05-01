@@ -5,7 +5,7 @@ const DEBUG: boolean = true;
 
 type SubredditTableProps = {
   items: SubredditInfo[],
-  page: bigint,
+  pageNumber: bigint,
   itemsPerPage: bigint
 }
 
@@ -15,18 +15,19 @@ export class SubredditTable extends Component<SubredditTableProps, {}> {
   }
 
   render = (): JSX.Element => {
-    return this.makeSubredditTable({ subreddits: this.props.items });
+    return this.makeSubredditTable();
   }
 
-  makeSubredditTable = (props: { subreddits: SubredditInfo[] }): JSX.Element => {
-    if(DEBUG) console.log(`SubredditTable.makeSubredditTable: itemsPerPage: ${this.props.itemsPerPage} items: ${this.props.items}`);
+  makeSubredditTable = (): JSX.Element => {
+    if(DEBUG) console.log(`SubredditTable.makeSubredditTable: itemsPerPage: ${this.props.itemsPerPage}`);
+    
     const rows: JSX.Element[] = [];
     let alternate: boolean = false;
-    let rank: bigint = this.props.page == 0n ? 1n : (this.props.itemsPerPage * this.props.page) + 1n;
+    let rank: bigint = this.props.pageNumber == 0n ? 1n : (this.props.itemsPerPage * this.props.pageNumber) + 1n;
 
     for (let i: bigint = 0n; i < this.props.items.length; i++) {
       rows.push(
-        this.makeSubredditRow({ subreddit: props.subreddits[Number(i)], alternate: alternate, rank: rank + i })
+        this.makeSubredditRow({ subreddit: this.props.items[Number(i)], alternate: alternate, rank: rank + i })
       );
       alternate = !alternate;
     }
@@ -60,10 +61,6 @@ export class SubredditTable extends Component<SubredditTableProps, {}> {
         <td>{props.subreddit.subscribers.toLocaleString()}</td>
       </tr >
     );
-    /**
-     * .toLocaleString turns the number readable format, with commas
-     * 1012349 -> 1,012,349
-     */
   }
 
   doRowClick = (url: string): void => {

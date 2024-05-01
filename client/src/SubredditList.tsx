@@ -1,20 +1,17 @@
 import React, { Component } from "react";
 import { SubredditInfo } from "./data/subredditInfo";
-import { SubredditTable } from "./SubredditTable";
-import { isRecord, parseSubredditInfo} from "./record";
+// import { isRecord, parseSubredditInfo} from "./record";
 
 const DEBUG : boolean = true;
 
 type SubredditListProps = {
   pageNumber: bigint,
   itemsPerPage: bigint,
+  firstItemNumber: bigint, 
+  items : SubredditInfo[] | undefined,
 }
 
-type SubredditListState = {
-  items: SubredditInfo[] | undefined;
-}
-
-export class SubredditList extends Component<SubredditListProps, SubredditListState> {
+export class SubredditList extends Component<SubredditListProps, {}> {
   constructor(props: SubredditListProps) {
     super(props);
 
@@ -22,77 +19,62 @@ export class SubredditList extends Component<SubredditListProps, SubredditListSt
   }
 
   render = (): JSX.Element => {
-    if (this.state.items === undefined) {
+    if(DEBUG) console.log(`SubredditList.render() `);
+    return this.makeSubredditTable();
+  }
+
+  makeSubredditTable = (): JSX.Element => {
+    if(DEBUG) console.log(`SubredditTable.makeSubredditTable: itemsPerPage: ${this.props.itemsPerPage}`);
+
+    if(this.props.items === undefined){
       return <></>
-      // TODO ************************
-      // return the loading animation thing
-    } else {
-      return (
-        <div className="subredditTableContainer">
-          <SubredditTable
-            items={this.state.items}
-            page={this.props.pageNumber}
-            itemsPerPage={this.props.itemsPerPage} />
+    }
+    
+    const rows: JSX.Element[] = [];
+    let alternate: boolean = false;
+    let rank: bigint = this.props.firstItemNumber;
+
+    for (let i: bigint = 0n; i < this.props.itemsPerPage; i++) {
+      rows.push(
+        this.makeSubredditRow({ subreddit: this.props.items[Number(i)], alternate: alternate, rank: rank + i })
+      );
+      alternate = !alternate;
+    }
+
+    return (
+      <div className="subredditTableContainer">
+        <div>
+          <h2 className="table-title">Subscribers</h2>
+          <table>
+            <thead>
+              <tr className="tableHeader">
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Subcount</th>
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </table>
         </div>
-      )
-    }
+      </div>
+    );
   }
 
-  componentDidMount = (): void => {
-    if(DEBUG) console.log("SubredditList.componentDidMount")
-    this.doRefreshClick(this.props.itemsPerPage, this.props.pageNumber);
+  makeSubredditRow = (props: { subreddit: SubredditInfo, alternate: boolean, rank: bigint, firstRow?: boolean }) => {
+    let className: string = props.alternate ? "darkRow" : "lightRow";
+    let url: string = 'https://reddit.com/r/' + props.subreddit.name;
+
+    return (
+      <tr className={className} onClick={() => this.doRowClick(url)} key={Number(props.rank)}>
+        <td>{Number(props.rank)}</td>
+        <td>{props.subreddit.name}</td>
+        { }
+        <td>{props.subreddit.subscribers.toLocaleString()}</td>
+      </tr >
+    );
   }
 
-  componentDidUpdate = (prevProps: SubredditListProps): void => {
-    if(DEBUG) console.log(`SubredditList.componentDidUpdate: prevProps.itemsPerPage:${prevProps.itemsPerPage} prevProps.pageNumber:${prevProps.pageNumber}`);
-    
-    if(prevProps.itemsPerPage !== this.props.itemsPerPage || prevProps.pageNumber !== this.props.pageNumber){
-      if(DEBUG) console.log(`componendDidUpdate: initiate fetch calls`);
-      this.doRefreshClick(this.props.itemsPerPage, this.props.pageNumber);
-    }
+  doRowClick = (url: string): void => {
+    window.open(url, '_blank');
   }
-
-  doRefreshClick = (itemsPerPage: bigint, pageNumber: bigint): void => {
-    const args = {itemsPerPage: Number(itemsPerPage), pageNumber: Number(pageNumber)};
-    fetch("/api/getSubredditInfos", {
-      method: "POST", body: JSON.stringify(args),
-      headers: {"Content-Type": "application/json"} })
-    .then(this.doGetResp)
-    .catch(() => this.doGetError("failed to connect to server"));
-  }
-
-  doGetResp = (res: Response): void => {
-    if (res.status === 200) {
-      res.json().then(this.doGetJson)
-          .catch(() => this.doGetError("200 res is not JSON"));
-    } else if (res.status === 400) {
-      res.text().then(this.doGetError)
-          .catch(() => this.doGetError("400 response is not text"));
-    } else {
-      this.doGetError(`bad status code from /api/refersh: ${res.status}`);
-    }
-  };
-
-  doGetJson = (data: unknown): void => {
-    if (!isRecord(data)) {
-      console.error("bad data from /api/getSubredditInfos: not a record", data);
-      return;
-    }
-
-    if(data.items == undefined){
-      console.error("bad data from /api/getSubredditInfos: data not returned", data.items);
-      return;
-    }
-    
-    const items : SubredditInfo[] | undefined = parseSubredditInfo(data);
-    if(items == undefined){
-      console.error("bad data from /api/getSubredditInfos: returned data was malformatted", data);
-      return;
-    }
-    this.setState({items});
-  }
-
-  doGetError = (msg: string): void => {
-    console.error(`Error fetching /api/refresh: ${msg}`);
-  };
 }

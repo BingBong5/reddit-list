@@ -1,0 +1,19 @@
+.pagination-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination-box{
+  width: 30%;
+  margin-left: 20%;
+  margin-right: 20%;
+  display:flex;
+  justify-content: space-between;
+}
+
+.pagination-button{
+  height:3em;
+  width:5em;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
