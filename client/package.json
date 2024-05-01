@@ -1,7 +1,7 @@
 {
-  "name": "cse331-hw-flashcard-client",
+  "name": "reddit-list-client",
   "version": "0.0.1",
-  "description": "CSE 331 Flashcard",
+  "description": "redditlist-client",
   "main": "",
   "scripts": {
     "build": "webpack --config src/webpack.config.js",
